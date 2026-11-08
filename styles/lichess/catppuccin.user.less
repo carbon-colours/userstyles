@@ -1,17 +1,17 @@
 /* ==UserStyle==
 @name Lichess Catppuccin
-@namespace github.com/catppuccin/userstyles/styles/lichess
-@homepageURL https://github.com/catppuccin/userstyles/tree/main/styles/lichess
+@namespace github.com/carbon-colours/userstyles/styles/lichess
+@homepageURL https://github.com/carbon-colours/userstyles/tree/main/styles/lichess
 @version 2026.11.01
-@updateURL https://github.com/catppuccin/userstyles/raw/main/styles/lichess/catppuccin.user.less
-@supportURL https://github.com/catppuccin/userstyles/issues?q=is%3Aopen+is%3Aissue+label%3Alichess
+@updateURL https://github.com/carbon-colours/userstyles/raw/main/styles/lichess/catppuccin.user.less
+@supportURL https://github.com/carbon-colours/userstyles/issues?q=is%3Aopen+is%3Aissue+label%3Alichess
 @description Soothing pastel theme for Lichess
 @author Catppuccin
 @license MIT
 
 @preprocessor less
-@var select lightFlavor "Light Flavor" ["latte:Latte*", "frappe:Frappé", "macchiato:Macchiato", "mocha:Mocha"]
-@var select darkFlavor "Dark Flavor" ["latte:Latte", "frappe:Frappé", "macchiato:Macchiato", "mocha:Mocha*"]
+@var select lightFlavor "Light Flavor" ["latte:Light*", "mocha:Dark"]
+@var select darkFlavor "Dark Flavor" ["latte:Light", "mocha:Dark*"]
 @var select accentColor "Accent" ["rosewater:Rosewater", "flamingo:Flamingo", "pink:Pink", "mauve:Mauve*", "red:Red", "maroon:Maroon", "peach:Peach", "yellow:Yellow", "green:Green", "teal:Teal", "blue:Blue", "sapphire:Sapphire", "sky:Sky", "lavender:Lavender", "subtext0:Gray"]
 
 @var select lastMoveColor "Last Move" ["rosewater:Rosewater", "flamingo:Flamingo", "pink:Pink", "mauve:Mauve", "red:Red*", "maroon:Maroon", "peach:Peach", "yellow:Yellow", "green:Green", "teal:Teal", "blue:Blue", "sapphire:Sapphire", "sky:Sky", "lavender:Lavender", "subtext0:Gray"]
@@ -20,7 +20,7 @@
 @var checkbox styleBoard "Style Board" 1
 ==/UserStyle== */
 
-@import "https://userstyles.catppuccin.com/lib/std/v1.less";
+@import "https://raw.githubusercontent.com/carbon-colours/userstyles/refs/heads/main/lib/std/v1.less";
 
 @-moz-document domain("lichess.org") {
   :root:has(body[data-theme~="light"]) {

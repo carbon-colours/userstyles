@@ -1,28 +1,30 @@
 /* ==UserStyle==
 @name Codeberg Catppuccin
-@namespace github.com/catppuccin/userstyles/styles/codeberg
-@homepageURL https://github.com/catppuccin/userstyles/tree/main/styles/codeberg
+@namespace github.com/carbon-colours/userstyles/styles/codeberg
+@homepageURL https://github.com/carbon-colours/userstyles/tree/main/styles/codeberg
 @version 2026.11.08
-@updateURL https://github.com/catppuccin/userstyles/raw/main/styles/codeberg/catppuccin.user.less
-@supportURL https://github.com/catppuccin/userstyles/issues?q=is%3Aopen+is%3Aissue+label%3Acodeberg
+@updateURL https://github.com/carbon-colours/userstyles/raw/main/styles/codeberg/catppuccin.user.less
+@supportURL https://github.com/carbon-colours/userstyles/issues?q=is%3Aopen+is%3Aissue+label%3Acodeberg
 @description Soothing pastel theme for Codeberg
 @author Catppuccin
 @license MIT
 
 @preprocessor less
-@var select lightFlavor "Light Flavor" ["latte:Latte*", "frappe:Frappé", "macchiato:Macchiato", "mocha:Mocha"]
-@var select darkFlavor "Dark Flavor" ["latte:Latte", "frappe:Frappé", "macchiato:Macchiato", "mocha:Mocha*"]
+@var select lightFlavor "Light Flavor" ["latte:Light*", "mocha:Dark"]
+@var select darkFlavor "Dark Flavor" ["latte:Light", "mocha:Dark*"]
 @var select accentColor "Accent" ["rosewater:Rosewater", "flamingo:Flamingo", "pink:Pink", "mauve:Mauve*", "red:Red", "maroon:Maroon", "peach:Peach", "yellow:Yellow", "green:Green", "teal:Teal", "blue:Blue", "sapphire:Sapphire", "sky:Sky", "lavender:Lavender", "subtext0:Gray"]
 ==/UserStyle== */
 
-@import "https://userstyles.catppuccin.com/lib/std/v1.less";
+@import "https://raw.githubusercontent.com/carbon-colours/userstyles/refs/heads/main/lib/std/v1.less";
+
+@_urlAccent: if((@accentColor = subtext0), gray, @accentColor);
 
 @-moz-document domain("codeberg.org") {
   @import (css)
-    url("https://catppuccin.github.io/gitea/theme-catppuccin-@{lightFlavor}-@{accentColor}.css")
+    url("https://carbon-colours.github.io/gitea/theme-catppuccin-light-@{_urlAccent}.css")
     (prefers-color-scheme: light);
   @import (css)
-    url("https://catppuccin.github.io/gitea/theme-catppuccin-@{darkFlavor}-@{accentColor}.css")
+    url("https://carbon-colours.github.io/gitea/theme-catppuccin-dark-@{_urlAccent}.css")
     (prefers-color-scheme: dark);
 }
 
