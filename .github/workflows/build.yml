@@ -6,30 +6,70 @@ on:
     branches: [main]
     paths-ignore: ["docs/**"]
 
+concurrency:
+  group: userstyles-publish
+  cancel-in-progress: false
+
 jobs:
   build:
-    if: github.repository == 'catppuccin/userstyles'
+    if: github.repository == 'carbon-colours/userstyles'
     runs-on: ubuntu-latest
+
     permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
       contents: write
 
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: all-userstyles-export
+
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: Checkout latest main
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.USERSTYLES_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Record existing release tag
+        id: release
+        run: |
+          gh release view "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" > /dev/null
+
+          tag_sha=$(git ls-remote --tags origin \
+            "refs/tags/$RELEASE_TAG" | cut -f1)
+
+          if [ -z "$tag_sha" ]; then
+            echo "Release tag is missing."
+            exit 1
+          fi
+
+          echo "sha=$tag_sha" >> "$GITHUB_OUTPUT"
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.3.5
-          cache: true
+          deno-version: v2.8.3
 
       - name: Generate Stylus import
         run: deno task ci:stylus-import
 
-      - name: Upload release artifact
-        run: gh release upload --clobber all-userstyles-export ./dist/import.json
+      - name: Verify export
+        run: |
+          test -s dist/import.json
+          jq -e 'type == "array" and length > 1' \
+            dist/import.json > /dev/null
+
+      - name: Update release tag
         env:
-          GH_TOKEN: ${{ github.token }}
+          EXPECTED_TAG: ${{ steps.release.outputs.sha }}
+        run: |
+          git push \
+            --force-with-lease="refs/tags/$RELEASE_TAG:$EXPECTED_TAG" \
+            origin "HEAD:refs/tags/$RELEASE_TAG"
+
+      - name: Upload release artifact
+        run: |
+          gh release upload "$RELEASE_TAG" \
+            ./dist/import.json \
+            --clobber \
+            --repo "$GITHUB_REPOSITORY"

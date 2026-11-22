@@ -1,0 +1,114 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: userstyles-publish
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'carbon-colours/userstyles'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.USERSTYLES_TOKEN }}
+
+      - name: Record original main
+        id: base
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream and fetch
+        run: |
+          git remote add upstream https://github.com/catppuccin/userstyles.git
+          git fetch upstream main
+
+      - name: Check if update needed
+        id: check
+        run: |
+          if git merge-base --is-ancestor upstream/main HEAD; then
+            echo "up-to-date=true" >> "$GITHUB_OUTPUT"
+            echo "Already up to date with upstream."
+          fi
+
+      - name: Save fork files, reset, and restore
+        if: steps.check.outputs.up-to-date != 'true'
+        run: |
+          # Save fork-specific files
+          mkdir -p /tmp/fork-files/.github
+          cp -r .github/workflows /tmp/fork-files/.github/
+          cp -r .github/patches /tmp/fork-files/.github/
+
+          # Reset to upstream
+          git reset --hard upstream/main
+
+          # Restore fork-specific files
+          cp -r /tmp/fork-files/.github/workflows .github/
+          cp -r /tmp/fork-files/.github/patches .github/
+
+      - name: Setup Deno
+        uses: nekowinston/setup-deno@main
+        with:
+          deno-version: v2.3.5
+
+      - name: Patch URLs
+        if: steps.check.outputs.up-to-date != 'true'
+        run: bash .github/patches/urls.sh
+
+      - name: Download palette
+        run: |
+          curl --fail --show-error --location \
+            --output "$RUNNER_TEMP/palette.json" \
+            https://raw.githubusercontent.com/carbon-colours/palette/main/palette.json
+
+      - name: Patch palette and filters
+        run: bash .github/patches/palette.sh "$RUNNER_TEMP/palette.json"
+
+      - name: Patch Codeberg
+        if: steps.check.outputs.up-to-date != 'true'
+        run: bash .github/patches/codeberg.sh
+
+      - name: Check generated palette and filters
+        run: bash .github/patches/palette.sh --check "$RUNNER_TEMP/palette.json"
+
+      - name: Validate patches
+        if: steps.check.outputs.up-to-date != 'true'
+        run: bash .github/patches/validate.sh
+
+      - name: Verify Stylus export builds
+        run: deno task ci:stylus-import
+
+      - name: Commit generated changes
+        run: |
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: apply fork patches"
+          fi
+
+      - name: Push updated main
+        env:
+          EXPECTED_MAIN: ${{ steps.base.outputs.sha }}
+        run: |
+          if [ "$(git rev-parse HEAD)" = "$EXPECTED_MAIN" ]; then
+            echo "No changes to push."
+            exit 0
+          fi
+
+          git push \
+            --force-with-lease="refs/heads/main:$EXPECTED_MAIN" \
+            origin HEAD:refs/heads/main

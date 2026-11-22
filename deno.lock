@@ -34,6 +34,7 @@
     "npm:ajv@8.17.1": "8.17.1",
     "npm:ajv@8.18.0": "8.18.0",
     "npm:handlebars@4.7.8": "4.7.8",
+    "npm:hex-to-css-filter@7.0.0": "7.0.0",
     "npm:json-schema-to-typescript@^15.0.3": "15.0.3",
     "npm:less@4.9.1": "4.9.1",
     "npm:postcss-less@6.0.0": "6.0.0_postcss@8.4.49",
@@ -648,6 +649,9 @@
     },
     "has-flag@4.0.0": {
       "integrity": "sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ=="
+    },
+    "hex-to-css-filter@7.0.0": {
+      "integrity": "sha512-PBpEVE8J9fv7RgO6yoIYqWo7ZV/yUgn9m1SCxH8V2g4bT+zq0IgEUcPY6q6ZPs384OzXQUdOXWWAKpv0Ro6zuw=="
     },
     "html-tags@3.3.1": {
       "integrity": "sha512-ztqyC3kLto0e9WbNp0aeP+M3kTt+nbaIveGmUxAtZa+8iFgKLUOD4YKM5j+f3QD89bra7UeumolZHKuOXnTmeQ=="

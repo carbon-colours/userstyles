@@ -1,0 +1,11 @@
+{
+  "version": "5",
+  "specifiers": {
+    "npm:hex-to-css-filter@7.0.0": "7.0.0"
+  },
+  "npm": {
+    "hex-to-css-filter@7.0.0": {
+      "integrity": "sha512-PBpEVE8J9fv7RgO6yoIYqWo7ZV/yUgn9m1SCxH8V2g4bT+zq0IgEUcPY6q6ZPs384OzXQUdOXWWAKpv0Ro6zuw=="
+    }
+  }
+}
